@@ -1,3 +1,6 @@
 [submodule "optget"]
 	path = optget
 	url = git@github.com:YiFanChen99/OptGetter.git
+[submodule "fileinfo"]
+	path = fileinfo
+	url = git@github.com:YiFanChen99/FileInfoForReplacementOnDev.git
