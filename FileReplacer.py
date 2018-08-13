@@ -74,6 +74,8 @@ class FilePathReplacer(FileReplacer):
         self.move_file_with_backup(file_path, file.target)
         self.change_permission(file)
 
+        return file
+
     @classmethod
     def recover(self, file_path):
         filename = self.get_filename(file_path)
@@ -98,6 +100,8 @@ class FilenameReplacer(FileReplacer):
 
         self.copy_file_with_backup(file.default_source, file.target)
         self.change_permission(file)
+
+        return file
 
     @classmethod
     def recover(self, filename):
@@ -148,9 +152,10 @@ def handle_replacement_opt(argv):
         raise RuntimeError("Insufficient parameters. Do nothing.")
 
     if '-r' in options:
-        replacer.recover(target)
+        file = replacer.recover(target)
     else:
-        replacer.replace(target)
+        file = replacer.replace(target)
+    print "Done: [%s]." % file.target
 
 
 def main(argv):
