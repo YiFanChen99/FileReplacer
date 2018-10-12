@@ -52,6 +52,19 @@ class FileReplacer(object):
             raise RuntimeError("Given file \"%s\" is NOT in maps." % (filename))
         return file
 
+    @classmethod
+    def replace(cls, *args):
+        file = cls._replace(*args)
+        cls._post_replace(file)
+        return file
+
+    @classmethod
+    def _post_replace(cls, file):
+        if hasattr(file, 'gz'):
+            result = sh.call(['rm', '-f', file.gz])
+            if result != 0:
+                print "Failed to remove gz file. [%s]." % file.target
+
 
 class FilePathReplacer(FileReplacer):
     @staticmethod
@@ -67,12 +80,12 @@ class FilePathReplacer(FileReplacer):
         return os.path.basename(file_path)
 
     @classmethod
-    def replace(self, file_path):
-        filename = self.get_filename(file_path)
-        file = self.get_corresponding_file(filename)
+    def _replace(cls, file_path):
+        filename = cls.get_filename(file_path)
+        file = cls.get_corresponding_file(filename)
 
-        self.move_file_with_backup(file_path, file.target)
-        self.change_permission(file)
+        cls.move_file_with_backup(file_path, file.target)
+        cls.change_permission(file)
 
         return file
 
@@ -95,11 +108,11 @@ class FilenameReplacer(FileReplacer):
             raise RuntimeError("action \'copy_file_with_backup\'")
 
     @classmethod
-    def replace(self, filename):
-        file = self.get_corresponding_file(filename)
+    def _replace(cls, filename):
+        file = cls.get_corresponding_file(filename)
 
-        self.copy_file_with_backup(file.default_source, file.target)
-        self.change_permission(file)
+        cls.copy_file_with_backup(file.default_source, file.target)
+        cls.change_permission(file)
 
         return file
 
